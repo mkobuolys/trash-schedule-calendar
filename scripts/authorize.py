@@ -10,10 +10,14 @@ with the Calendar API enabled.
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 
-from google_auth_oauthlib.flow import InstalledAppFlow
+# Runnable straight from a checkout, without an editable install.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from trash_calendar.gcal import SCOPES
+from google_auth_oauthlib.flow import InstalledAppFlow  # noqa: E402
+
+from trash_calendar.gcal import SCOPES  # noqa: E402
 
 
 def main() -> int:

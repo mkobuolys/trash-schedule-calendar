@@ -26,6 +26,9 @@ def merge(collections: list[Collection]) -> list[CalendarEvent]:
             label = resolve_label(collection)
             if label not in labels:
                 labels.append(label)
+            # Full container id on purpose: the description lands on the user's
+            # own calendar, not in a log, and it is what they need when
+            # contacting the operator. Logs use trash_calendar.redact instead.
             detail = f"{collection.container_id} ({label}) — {collection.provider}"
             if collection.cadence:
                 detail += f", {collection.cadence}"

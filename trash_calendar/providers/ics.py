@@ -14,6 +14,7 @@ from dateutil.rrule import rrulestr
 from icalendar import Calendar
 
 from trash_calendar.models import Collection, DateRange, ProviderError
+from trash_calendar.redact import redact
 
 
 def parse_ics(
@@ -27,11 +28,11 @@ def parse_ics(
     try:
         calendar = Calendar.from_ical(data)
     except Exception as exc:  # icalendar raises assorted ValueError subclasses
-        raise ProviderError(f"could not parse ICS for {container_id!r}: {exc}") from exc
+        raise ProviderError(f"could not parse ICS for {redact(container_id)!r}: {exc}") from exc
 
     events = list(calendar.walk("VEVENT"))
     if not events:
-        raise ProviderError(f"ICS for {container_id!r} contains no events")
+        raise ProviderError(f"ICS for {redact(container_id)!r} contains no events")
 
     dates: set[date] = set()
     for event in events:

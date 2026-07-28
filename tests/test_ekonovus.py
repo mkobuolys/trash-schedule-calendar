@@ -145,7 +145,8 @@ def test_fetch_raises_when_the_container_is_unknown_to_this_provider():
     }
     provider = EkonovusProvider(transport=FakeTransport(empty))
     container = ContainerConfig(provider="ekonovus", id="10-MK-000000")
-    with pytest.raises(ProviderError, match="10-MK-000000"):
+    # The error must carry the redacted id, never the full one.
+    with pytest.raises(ProviderError, match=r"10-MK-\*\*\*00"):
         provider.fetch(container, DateRange(date(2026, 7, 28), date(2027, 1, 28)))
 
 

@@ -28,9 +28,6 @@ jobs:
           pip install -e ".[dev]"
           python -m playwright install --with-deps chromium
 
-      - name: Run tests
-        run: pytest
-
       - name: Write config
         env:
           TRASH_CONFIG_YAML: ${{ secrets.TRASH_CONFIG_YAML }}
@@ -45,26 +42,28 @@ jobs:
             exit 1
           fi
 
+      # After writing config.yaml on purpose: test_repo_privacy compares every
+      # tracked file against the real values in it, so it only has teeth here.
+      - name: Run tests
+        run: pytest
+
       - name: Sync calendar
         env:
           GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
           GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
           GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
+        # Deliberately NOT --verbose: on a public repository these logs are
+        # world-readable, and debug logging prints the Calendar API URL
+        # containing the calendar id. Container ids are redacted by the CLI.
         run: |
           if [ "$DRY_RUN" = "true" ]; then
-            python -m trash_calendar.cli --dry-run --verbose
+            python -m trash_calendar.cli --dry-run
           else
-            python -m trash_calendar.cli --verbose
+            python -m trash_calendar.cli
           fi
 
-      - name: Upload failure artifacts
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: failure-artifacts
-          path: |
-            screenshots/
-            traces/
-          if-no-files-found: ignore
-          retention-days: 14
+      # No artifact upload on purpose. Playwright's screenshot of the provider's
+      # results page shows the household address in full, and artifacts on a
+      # public repository are downloadable by anyone. Reproduce failures locally
+      # with `pytest -m live`, which writes screenshots/ and traces/ on the spot.

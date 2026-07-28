@@ -20,6 +20,7 @@ from pydantic import BaseModel
 from trash_calendar.config import ContainerConfig
 from trash_calendar.models import Collection, DateRange, ProviderError
 from trash_calendar.providers.powerbi_dsr import decode_dsr, epoch_ms_to_date
+from trash_calendar.redact import redact
 
 SCHEDULES_PAGE = "https://www.ekonovus.lt/aptarnavimo-grafikai/"
 
@@ -239,7 +240,7 @@ class EkonovusProvider:
 
         if not rows:
             raise ProviderError(
-                f"Ekonovus returned no schedule for container {container.id!r}; "
+                f"Ekonovus returned no schedule for container {redact(container.id)!r}; "
                 "check the inventory number or whether this container belongs to "
                 "another provider"
             )

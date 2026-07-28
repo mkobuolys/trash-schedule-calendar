@@ -147,6 +147,30 @@ This matters more than it sounds: the failure mode worth guarding against is a
 silent one, where a site changes, nothing is scraped, and the reminders simply
 stop.
 
+To debug a provider failure, reproduce it locally — `pytest -m live` writes
+`screenshots/` and `traces/` on the spot. CI deliberately uploads neither; see
+below.
+
+## A note on privacy
+
+On a public repository, **Actions logs and artifacts are world-readable**, so the
+scraper treats them as published output:
+
+- **Container ids are redacted in all log output** (`52-S-***27`). They are not
+  opaque tokens — Ekonovus' public API resolves a container id to the street
+  address it serves, with no authentication, so a full id in a log discloses the
+  address.
+- **CI never runs `--verbose`**, because debug logging prints the Calendar API
+  URL, which contains the calendar id.
+- **No failure artifacts are uploaded**, because Playwright's screenshot of the
+  provider's results page shows the address in full.
+- `config.yaml` (address) and `.env` (tokens) are gitignored, and
+  `tests/test_repo_privacy.py` fails the build if any tracked file contains a
+  value from your local config.
+
+The full container id still appears in the calendar event description — that is
+your own private calendar, and it is what you need when contacting the operator.
+
 ## Adding a provider
 
 Add a module under `trash_calendar/providers/` exposing:

@@ -23,6 +23,7 @@ from pydantic import BaseModel
 from trash_calendar.config import ContainerConfig, Location
 from trash_calendar.models import Collection, DateRange, ProviderError
 from trash_calendar.providers.ics import parse_ics
+from trash_calendar.redact import redact
 
 BASE_URL = "https://grafikai.svara.lt/"
 ICS_URL = BASE_URL + "api/calendar/download/{hashed_id}"
@@ -87,7 +88,7 @@ def find_contract(body: str, container_id: str) -> Contract:
             continue
         hashed_id = record.get("hashedId")
         if not hashed_id:
-            raise ProviderError(f"Svara record for {container_id!r} has no hashedId")
+            raise ProviderError(f"Svara record for {redact(container_id)!r} has no hashedId")
         return Contract(
             hashed_id=str(hashed_id),
             label=record.get("descriptionFmt") or record.get("description"),
@@ -95,7 +96,7 @@ def find_contract(body: str, container_id: str) -> Contract:
         )
 
     raise ProviderError(
-        f"Svara returned no container matching {container_id!r} at this address; "
+        f"Svara returned no container matching {redact(container_id)!r} at this address; "
         "check the container number and the address"
     )
 
@@ -163,7 +164,7 @@ class PlaywrightLookup:
             except Exception as exc:
                 page.screenshot(path=str(ARTIFACTS / "svara-failure.png"), full_page=True)
                 raise ProviderError(
-                    f"Svara form lookup failed for {container_id!r}: {exc}"
+                    f"Svara form lookup failed for {redact(container_id)!r}: {exc}"
                 ) from exc
             finally:
                 context.tracing.stop(path=str(TRACES / "svara.zip"))
@@ -173,7 +174,7 @@ class PlaywrightLookup:
             if container_id in body:
                 return find_contract(body, container_id)
         raise ProviderError(
-            f"Svara search returned no record for {container_id!r}; "
+            f"Svara search returned no record for {redact(container_id)!r}; "
             "the address may be wrong or the site's response shape may have changed"
         )
 
@@ -209,7 +210,9 @@ class SvaraProvider:
 
     def fetch(self, container: ContainerConfig, horizon: DateRange) -> list[Collection]:
         if container.location is None:
-            raise ProviderError(f"svara container {container.id!r} has no location configured")
+            raise ProviderError(
+                f"svara container {redact(container.id)!r} has no location configured"
+            )
 
         contract = self._run(self.lookup.find, container.location, container.id)
         data = self._run(self.fetcher.fetch, contract.hashed_id)

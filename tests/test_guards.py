@@ -12,7 +12,8 @@ def some(n):
 
 
 def test_zero_collections_trips_the_guard():
-    with pytest.raises(GuardError, match="10-S-000000"):
+    # Redacted: guard messages land in public CI logs.
+    with pytest.raises(GuardError, match=r"10-S-\*\*\*00"):
         check_collections([], "10-S-000000")
 
 

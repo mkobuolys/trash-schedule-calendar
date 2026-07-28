@@ -18,6 +18,7 @@ from trash_calendar.guards import GuardError, check_collections, check_plan
 from trash_calendar.merge import merge
 from trash_calendar.models import Collection, ConfigError, DateRange, ProviderError
 from trash_calendar.providers import get_provider
+from trash_calendar.redact import redact
 
 log = logging.getLogger("trash_calendar")
 
@@ -73,12 +74,12 @@ def main(argv: list[str] | None = None) -> int:
         collections: list[Collection] = []
         for container in config.containers:
             if args.source and container.provider != args.source:
-                log.info("skipping %s (%s)", container.id, container.provider)
+                log.info("skipping %s (%s)", redact(container.id), container.provider)
                 continue
             provider = get_provider(container.provider)
             found = provider.fetch(container, horizon)
             check_collections(found, container.id)
-            log.info("%s (%s): %d dates", container.id, container.provider, len(found))
+            log.info("%s (%s): %d dates", redact(container.id), container.provider, len(found))
             collections.extend(found)
 
         if not collections:

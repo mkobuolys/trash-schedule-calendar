@@ -13,6 +13,7 @@ import yaml
 from pydantic import BaseModel, Field, ValidationError
 
 from trash_calendar.models import ConfigError
+from trash_calendar.redact import redact
 
 DEFAULT_CONFIG_PATH = "config.yaml"
 
@@ -75,6 +76,6 @@ def _validate_against_provider(container: ContainerConfig) -> None:
     except ValidationError as exc:
         fields = ", ".join(".".join(str(p) for p in e["loc"]) for e in exc.errors())
         raise ConfigError(
-            f"provider {container.provider!r} container {container.id!r} "
+            f"provider {container.provider!r} container {redact(container.id)!r} "
             f"is missing or has invalid required config: {fields}"
         ) from exc

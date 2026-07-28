@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from trash_calendar.gcal import SyncPlan
 from trash_calendar.models import Collection
+from trash_calendar.redact import redact
 
 MAX_DATES_PER_CONTAINER = 200
 
@@ -21,13 +22,13 @@ class GuardError(RuntimeError):
 def check_collections(collections: list[Collection], container_id: str) -> None:
     if not collections:
         raise GuardError(
-            f"no collection dates found for container {container_id!r} within the horizon; "
+            f"no collection dates found for container {redact(container_id)!r} within the horizon; "
             "the provider may have changed or the container id may be wrong"
         )
     if len(collections) > MAX_DATES_PER_CONTAINER:
         raise GuardError(
-            f"implausible number of dates ({len(collections)}) for container {container_id!r}; "
-            f"expected at most {MAX_DATES_PER_CONTAINER}"
+            f"implausible number of dates ({len(collections)}) for container "
+            f"{redact(container_id)!r}; expected at most {MAX_DATES_PER_CONTAINER}"
         )
 
 

@@ -57,7 +57,7 @@ def test_find_contract_extracts_label_and_cadence():
 
 
 def test_find_contract_raises_when_the_container_is_absent():
-    with pytest.raises(ProviderError, match="52-XX-999999"):
+    with pytest.raises(ProviderError, match=r"52-XX-\*\*\*99"):
         find_contract(CONTRACTS, "52-XX-999999")
 
 

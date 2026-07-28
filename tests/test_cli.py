@@ -48,7 +48,7 @@ def config_file(tmp_path):
 
 def _patch(monkeypatch, collections, sync):
     monkeypatch.setattr(cli, "get_provider", lambda name: StubProvider(collections))
-    monkeypatch.setattr(cli, "build_sync", lambda config: sync)
+    monkeypatch.setattr(cli, "build_sync", lambda config, offline=False: sync)
 
 
 def test_cli_syncs_and_exits_zero(monkeypatch, config_file):
@@ -83,17 +83,34 @@ def test_bad_config_exits_non_zero(tmp_path):
     assert cli.main(["--config", str(bad)]) == 1
 
 
-def test_missing_google_credentials_exit_non_zero(monkeypatch, config_file):
-    monkeypatch.setattr(
-        cli, "get_provider", lambda name: StubProvider([Collection(date(2026, 8, 27), "x", "e")])
-    )
+def _clear_credentials(monkeypatch):
     for name in (
         "GOOGLE_OAUTH_CLIENT_ID",
         "GOOGLE_OAUTH_CLIENT_SECRET",
         "GOOGLE_OAUTH_REFRESH_TOKEN",
     ):
         monkeypatch.delenv(name, raising=False)
+
+
+def test_missing_google_credentials_exit_non_zero(monkeypatch, config_file):
+    monkeypatch.setattr(
+        cli, "get_provider", lambda name: StubProvider([Collection(date(2026, 8, 27), "x", "e")])
+    )
+    _clear_credentials(monkeypatch)
     assert cli.main(["--config", str(config_file)]) == 1
+
+
+def test_dry_run_works_without_google_credentials(monkeypatch, config_file, capsys):
+    """A dry run must be usable for checking the scrape before any Google setup."""
+    monkeypatch.setattr(
+        cli,
+        "get_provider",
+        lambda name: StubProvider(
+            [Collection(date(2026, 8, 27), "10-S-000000", "ekonovus", "Stiklas")]
+        ),
+    )
+    _clear_credentials(monkeypatch)
+    assert cli.main(["--config", str(config_file), "--dry-run"]) == 0
 
 
 def test_a_provider_error_exits_non_zero(monkeypatch, config_file):
@@ -106,5 +123,5 @@ def test_a_provider_error_exits_non_zero(monkeypatch, config_file):
             raise ProviderError("site changed shape")
 
     monkeypatch.setattr(cli, "get_provider", lambda name: Broken())
-    monkeypatch.setattr(cli, "build_sync", lambda config: StubSync())
+    monkeypatch.setattr(cli, "build_sync", lambda config, offline=False: StubSync())
     assert cli.main(["--config", str(config_file)]) == 1

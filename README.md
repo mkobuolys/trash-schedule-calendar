@@ -112,6 +112,10 @@ python -m trash_calendar.cli --dry-run --verbose   # show the diff, change nothi
 python -m trash_calendar.cli --verbose             # apply it
 ```
 
+`--dry-run` works **without** Google credentials — it scrapes and prints the
+events it would create, so you can check the schedule before doing any Google
+setup.
+
 Flags: `--config PATH`, `--source PROVIDER` (only that provider), `--months N`
 (override the horizon), `--force` (allow deleting more than half the managed
 events), `--dry-run`, `--verbose`.

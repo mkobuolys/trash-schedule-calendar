@@ -8,7 +8,12 @@ import os
 from datetime import date
 
 from trash_calendar.config import Config, load_config
-from trash_calendar.gcal import CalendarSync, build_google_client
+from trash_calendar.gcal import (
+    CalendarClient,
+    CalendarSync,
+    OfflineCalendarClient,
+    build_google_client,
+)
 from trash_calendar.guards import GuardError, check_collections, check_plan
 from trash_calendar.merge import merge
 from trash_calendar.models import Collection, ConfigError, DateRange, ProviderError
@@ -17,13 +22,28 @@ from trash_calendar.providers import get_provider
 log = logging.getLogger("trash_calendar")
 
 
-def build_sync(config: Config) -> CalendarSync:
-    client = build_google_client(
-        client_id=_require_env("GOOGLE_OAUTH_CLIENT_ID"),
-        client_secret=_require_env("GOOGLE_OAUTH_CLIENT_SECRET"),
-        refresh_token=_require_env("GOOGLE_OAUTH_REFRESH_TOKEN"),
-    )
+def build_sync(config: Config, offline: bool = False) -> CalendarSync:
+    if offline:
+        log.info("no Google credentials found; showing the scrape only")
+        client: CalendarClient = OfflineCalendarClient()
+    else:
+        client = build_google_client(
+            client_id=_require_env("GOOGLE_OAUTH_CLIENT_ID"),
+            client_secret=_require_env("GOOGLE_OAUTH_CLIENT_SECRET"),
+            refresh_token=_require_env("GOOGLE_OAUTH_REFRESH_TOKEN"),
+        )
     return CalendarSync(client, config.calendar_id, config.timezone, config.reminder_minutes_before)
+
+
+def _credentials_present() -> bool:
+    return all(
+        os.environ.get(name)
+        for name in (
+            "GOOGLE_OAUTH_CLIENT_ID",
+            "GOOGLE_OAUTH_CLIENT_SECRET",
+            "GOOGLE_OAUTH_REFRESH_TOKEN",
+        )
+    )
 
 
 def _require_env(name: str) -> str:
@@ -65,7 +85,9 @@ def main(argv: list[str] | None = None) -> int:
             raise GuardError("no collections gathered from any provider")
 
         events = merge(collections)
-        sync = build_sync(config)
+        # A dry run stays useful before any Google setup has been done.
+        offline = args.dry_run and not _credentials_present()
+        sync = build_sync(config, offline=offline)
         plan = sync.plan(events, horizon)
         check_plan(plan, force=args.force)
 

@@ -134,6 +134,26 @@ class CalendarSync:
         )
 
 
+class OfflineCalendarClient:
+    """Stands in for a real calendar when credentials are absent.
+
+    Reports an empty calendar and refuses writes, so ``--dry-run`` can show what
+    a scrape would produce before any Google setup has been done.
+    """
+
+    def list_events(self, calendar_id: str, time_min: str, time_max: str) -> list[dict]:
+        return []
+
+    def insert_event(self, calendar_id: str, body: dict) -> Any:
+        raise RuntimeError("offline calendar client cannot write")
+
+    def patch_event(self, calendar_id: str, event_id: str, body: dict) -> Any:
+        raise RuntimeError("offline calendar client cannot write")
+
+    def delete_event(self, calendar_id: str, event_id: str) -> Any:
+        raise RuntimeError("offline calendar client cannot write")
+
+
 class GoogleCalendarClient:
     """Thin adapter over google-api-python-client."""
 

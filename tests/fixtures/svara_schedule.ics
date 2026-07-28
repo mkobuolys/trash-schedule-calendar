@@ -1,0 +1,47 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Kauno Švara//Waste Collection Schedule//LT
+METHOD:REQUEST
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Atliekų grafikas - Pavyzdžio g. 1-1\, Pavyzdžio mstl.\, Pavyzdžio sen. Pavyzdžio r. sav.
+X-WR-CALDESC:2026 - 2027 metų mišrių atliekų vežimo grafikas\n10-MK-000000 0\,24\nPavyzdžio g. 1-1\, Pavyzdžio mstl.\, Pavyzdžio sen. Pavyzdžio r. sav.
+X-WR-TIMEZONE:Europe/Vilnius
+UID:calendar-999999@kaunosvara.lt
+BEGIN:VTIMEZONE
+TZID:Europe/Vilnius
+BEGIN:STANDARD
+DTSTART:19701025T040000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:EET
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:19700329T030000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:EEST
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:waste-999999@kaunosvara.lt
+DTSTAMP:20260728T202927Z
+DTSTART;VALUE=DATE:20260805
+DTEND;VALUE=DATE:20260806
+RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=WE;COUNT=32
+ORGANIZER;CN="UAB Kauno Švara":mailto:noreply_graf@svara.lt
+SEQUENCE:0
+SUMMARY:2026 - 2027 metų mišrių atliekų vežimo grafikas
+DESCRIPTION:Konteineris: 10-MK-000000 0\,24\nAdresas: Pavyzdžio g. 1-1\, Pavyzdžio mstl.\, Pavyzdžio sen. Pavyzdžio r. sav.
+LOCATION:Pavyzdžio g. 1-1\, Pavyzdžio mstl.\, Pavyzdžio sen. Pavyzdžio r. sav.
+TRANSP:TRANSPARENT
+STATUS:CONFIRMED
+CLASS:PUBLIC
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Priminimas\, 2026 - 2027 metų mišrių atliekų vežimo grafikas - rytoj!
+TRIGGER:-PT7H
+END:VALARM
+END:VEVENT
+END:VCALENDAR

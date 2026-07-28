@@ -1,0 +1,237 @@
+{
+ "jobIds": [
+  "0a322f5b-1135-4a26-909c-f615b571bbf2"
+ ],
+ "results": [
+  {
+   "jobId": "0a322f5b-1135-4a26-909c-f615b571bbf2",
+   "result": {
+    "data": {
+     "timestamp": "2026-07-28T19:44:51.855Z",
+     "rootActivityId": "992567a1-8542-4f80-ad5d-89da70a7ec56",
+     "descriptor": {
+      "Select": [
+       {
+        "Kind": 1,
+        "Depth": 0,
+        "Value": "G0",
+        "GroupKeys": [
+         {
+          "Source": {
+           "Entity": "Dumpster",
+           "Property": "InventoryNumber"
+          },
+          "Calc": "G0",
+          "IsSameAsSelect": true
+         }
+        ],
+        "Name": "inv"
+       },
+       {
+        "Kind": 1,
+        "Depth": 0,
+        "Value": "G1",
+        "Format": "yyyy\\-MM\\-dd",
+        "GroupKeys": [
+         {
+          "Source": {
+           "Entity": "ScheduleDates",
+           "Property": "Date"
+          },
+          "Calc": "G1",
+          "IsSameAsSelect": true
+         }
+        ],
+        "Name": "date"
+       },
+       {
+        "Kind": 2,
+        "Value": "M0",
+        "Name": "cnt"
+       }
+      ],
+      "Expressions": {
+       "Primary": {
+        "Groupings": [
+         {
+          "Keys": [
+           {
+            "Source": {
+             "Entity": "Dumpster",
+             "Property": "InventoryNumber"
+            },
+            "Select": 0
+           },
+           {
+            "Source": {
+             "Entity": "ScheduleDates",
+             "Property": "Date"
+            },
+            "Select": 1
+           }
+          ],
+          "Member": "DM0"
+         }
+        ]
+       }
+      },
+      "Version": 2
+     },
+     "fromCache": false,
+     "dsr": {
+      "Version": 2,
+      "MinorVersion": 1,
+      "DS": [
+       {
+        "N": "DS0",
+        "PH": [
+         {
+          "DM0": [
+           {
+            "S": [
+             {
+              "N": "G0",
+              "T": 1,
+              "DN": "D0"
+             },
+             {
+              "N": "G1",
+              "T": 7
+             },
+             {
+              "N": "M0",
+              "T": 4
+             }
+            ],
+            "C": [
+             0,
+             1785974400000,
+             1
+            ]
+           },
+           {
+            "C": [
+             1787788800000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1789603200000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1791417600000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1793232000000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1795046400000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1796860800000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1798675200000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1800489600000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1802304000000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1804118400000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1805932800000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1807747200000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1809561600000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1811376000000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1813190400000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1815004800000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1816819200000
+            ],
+            "R": 5
+           },
+           {
+            "C": [
+             1818633600000
+            ],
+            "R": 5
+           }
+          ]
+         }
+        ],
+        "IC": true,
+        "HAD": true,
+        "ValueDicts": {
+         "D0": [
+          "10-P-000000"
+         ]
+        }
+       }
+      ]
+     }
+    }
+   }
+  }
+ ]
+}

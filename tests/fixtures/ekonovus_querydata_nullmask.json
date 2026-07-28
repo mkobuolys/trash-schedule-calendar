@@ -1,0 +1,553 @@
+{
+ "jobIds": [
+  "d0bbb2fe-e88b-48bd-8d66-7a72b36e4169"
+ ],
+ "results": [
+  {
+   "jobId": "d0bbb2fe-e88b-48bd-8d66-7a72b36e4169",
+   "result": {
+    "data": {
+     "timestamp": "2026-07-28T19:56:44.467Z",
+     "rootActivityId": "f010ad29-db0d-4fe9-90d3-1e314cee00a1",
+     "descriptor": {
+      "Select": [
+       {
+        "Kind": 1,
+        "Depth": 0,
+        "Value": "G0",
+        "GroupKeys": [
+         {
+          "Source": {
+           "Entity": "WasteObject",
+           "Property": "Inventorinis nr."
+          },
+          "Calc": "G0",
+          "IsSameAsSelect": true
+         }
+        ],
+        "Name": "inv"
+       },
+       {
+        "Kind": 1,
+        "Depth": 0,
+        "Value": "G1",
+        "GroupKeys": [
+         {
+          "Source": {
+           "Entity": "WasteObject",
+           "Property": "Adresas"
+          },
+          "Calc": "G1",
+          "IsSameAsSelect": true
+         }
+        ],
+        "Name": "adr"
+       },
+       {
+        "Kind": 2,
+        "Value": "M0",
+        "Name": "cnt"
+       }
+      ],
+      "Expressions": {
+       "Primary": {
+        "Groupings": [
+         {
+          "Keys": [
+           {
+            "Source": {
+             "Entity": "WasteObject",
+             "Property": "Inventorinis nr."
+            },
+            "Select": 0
+           },
+           {
+            "Source": {
+             "Entity": "WasteObject",
+             "Property": "Adresas"
+            },
+            "Select": 1
+           }
+          ],
+          "Member": "DM0"
+         }
+        ]
+       }
+      },
+      "Version": 2
+     },
+     "fromCache": false,
+     "dsr": {
+      "Version": 2,
+      "MinorVersion": 1,
+      "DS": [
+       {
+        "N": "DS0",
+        "PH": [
+         {
+          "DM0": [
+           {
+            "S": [
+             {
+              "N": "G0",
+              "T": 1,
+              "DN": "D0"
+             },
+             {
+              "N": "G1",
+              "T": 1,
+              "DN": "D1"
+             },
+             {
+              "N": "M0",
+              "T": 4
+             }
+            ],
+            "C": [
+             0,
+             0,
+             72
+            ]
+           },
+           {
+            "C": [
+             1,
+             1
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             2,
+             2
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             3,
+             3
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             4,
+             4
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             5,
+             5
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             6,
+             6
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             7,
+             7
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             8,
+             8
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             9,
+             9
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             10,
+             10
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             11,
+             11
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             12,
+             12
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             13,
+             13
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             14,
+             14
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             15,
+             15
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             16,
+             16
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             17,
+             17
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             18,
+             18
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             19,
+             19
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             20,
+             20
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             21,
+             21
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             22,
+             22
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             23,
+             23
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             24,
+             24
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             25,
+             25
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             26,
+             26,
+             106
+            ]
+           },
+           {
+            "C": [
+             27
+            ],
+            "R": 6
+           },
+           {
+            "C": [
+             28
+            ],
+            "R": 6
+           },
+           {
+            "C": [
+             29,
+             3,
+             18
+            ]
+           },
+           {
+            "C": [
+             30,
+             14
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             31,
+             12
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             32,
+             22
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             33,
+             13
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             34,
+             24
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             35,
+             25
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             36,
+             11
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             37,
+             4
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             38,
+             18
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             39,
+             7
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             40,
+             10
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             41,
+             8
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             42,
+             20
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             43,
+             5
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             44,
+             0
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             45,
+             1
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             46,
+             6
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             47,
+             9
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             48,
+             17
+            ],
+            "R": 4
+           },
+           {
+            "C": [
+             49,
+             21
+            ],
+            "R": 4
+           }
+          ]
+         }
+        ],
+        "IC": false,
+        "RT": [
+         [
+          "'10-S-000000 (Stiklas)'",
+          "'Pavyzdžio mstl. Pavyzdžio g. 10'"
+         ]
+        ],
+        "ValueDicts": {
+         "D0": [
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "10-P-000000 (Pakuotė)",
+          "52-PJ-00207 (Pakuotė)",
+          "52-PJ-00208 (Pakuotė)",
+          "52-PJ-00326 (Pakuotė)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)",
+          "10-S-000000 (Stiklas)"
+         ],
+         "D1": [
+          "Pavyzdžio mstl. Pavyzdžio g. 1B",
+          "Pavyzdžio mstl. Pavyzdžio g. 27",
+          "Pavyzdžio mstl. Pavyzdžio g. 8",
+          "Pavyzdžio mstl. Pavyzdžio g. 6",
+          "Pavyzdžio mstl. Pavyzdžio g. 23",
+          "Pavyzdžio mstl. Pavyzdžio g. 1A",
+          "Pavyzdžio mstl. Pavyzdžio g. 20-2",
+          "Pavyzdžio mstl. Pavyzdžio g. 22-2",
+          "Pavyzdžio mstl. Pavyzdžio g. 4",
+          "Pavyzdžio mstl. Pavyzdžio g. 1-1",
+          "Pavyzdžio mstl. Pavyzdžio g. 22-1",
+          "Pavyzdžio mstl. Pavyzdžio g. 18",
+          "Pavyzdžio mstl. Pavyzdžio g. 9",
+          "Pavyzdžio mstl. Pavyzdžio g. 7",
+          "Pavyzdžio mstl. Pavyzdžio g. 11",
+          "Pavyzdžio mstl. Pavyzdžio g. 1-2",
+          "Pavyzdžio mstl. Pavyzdžio g. 12",
+          "Pavyzdžio mstl. Pavyzdžio g. 10A",
+          "Pavyzdžio mstl. Pavyzdžio g. 25",
+          "Pavyzdžio mstl. Pavyzdžio g. 13",
+          "Pavyzdžio mstl. Pavyzdžio g. 14",
+          "Pavyzdžio mstl. Pavyzdžio g. 10",
+          "Pavyzdžio mstl. Pavyzdžio g. 2A",
+          "Pavyzdžio mstl. Pavyzdžio g. 22",
+          "Pavyzdžio mstl. Pavyzdžio g. 2",
+          "Pavyzdžio mstl. Pavyzdžio g. 1-1",
+          "Pavyzdžio mstl. Pavyzdžio g. 15"
+         ]
+        }
+       }
+      ]
+     }
+    }
+   }
+  }
+ ]
+}

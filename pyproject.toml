@@ -1,0 +1,33 @@
+[project]
+name = "trash-calendar"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.7",
+    "PyYAML>=6.0",
+    "requests>=2.32",
+    "icalendar>=6.0",
+    "playwright>=1.44",
+    "python-dateutil>=2.9",
+    "google-api-python-client>=2.130",
+    "google-auth>=2.30",
+    "google-auth-oauthlib>=1.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.2", "ruff>=0.5"]
+
+[tool.setuptools.packages.find]
+include = ["trash_calendar*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["live: hits real provider APIs; excluded from CI"]
+addopts = "-m 'not live'"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

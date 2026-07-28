@@ -1,0 +1,185 @@
+{
+ "jobIds": [
+  "f6332ccf-474b-489d-9c54-06e7a0750b39"
+ ],
+ "results": [
+  {
+   "jobId": "f6332ccf-474b-489d-9c54-06e7a0750b39",
+   "result": {
+    "data": {
+     "timestamp": "2026-07-28T19:57:22.525Z",
+     "rootActivityId": "7ab77675-2273-4b0f-b7d9-c123dde587f0",
+     "descriptor": {
+      "Select": [
+       {
+        "Kind": 1,
+        "Depth": 0,
+        "Value": "G0",
+        "GroupKeys": [
+         {
+          "Source": {
+           "Entity": "WasteObject",
+           "Property": "Inventorinis nr."
+          },
+          "Calc": "G0",
+          "IsSameAsSelect": true
+         }
+        ],
+        "Name": "label"
+       },
+       {
+        "Kind": 1,
+        "Depth": 0,
+        "Value": "G1",
+        "GroupKeys": [
+         {
+          "Source": {
+           "Entity": "Schedule",
+           "Property": "Description"
+          },
+          "Calc": "G1",
+          "IsSameAsSelect": true
+         }
+        ],
+        "Name": "cadence"
+       },
+       {
+        "Kind": 1,
+        "Depth": 0,
+        "Value": "G2",
+        "Format": "yyyy\\-MM\\-dd",
+        "GroupKeys": [
+         {
+          "Source": {
+           "Entity": "ScheduleDates",
+           "Property": "Date"
+          },
+          "Calc": "G2",
+          "IsSameAsSelect": true
+         }
+        ],
+        "Name": "date"
+       },
+       {
+        "Kind": 2,
+        "Value": "M0",
+        "Name": "cnt"
+       }
+      ],
+      "Expressions": {
+       "Primary": {
+        "Groupings": [
+         {
+          "Keys": [
+           {
+            "Source": {
+             "Entity": "WasteObject",
+             "Property": "Inventorinis nr."
+            },
+            "Select": 0
+           },
+           {
+            "Source": {
+             "Entity": "Schedule",
+             "Property": "Description"
+            },
+            "Select": 1
+           },
+           {
+            "Source": {
+             "Entity": "ScheduleDates",
+             "Property": "Date"
+            },
+            "Select": 2
+           }
+          ],
+          "Member": "DM0"
+         }
+        ]
+       }
+      },
+      "Version": 2
+     },
+     "fromCache": false,
+     "dsr": {
+      "Version": 2,
+      "MinorVersion": 1,
+      "DS": [
+       {
+        "N": "DS0",
+        "PH": [
+         {
+          "DM0": [
+           {
+            "S": [
+             {
+              "N": "G0",
+              "T": 1,
+              "DN": "D0"
+             },
+             {
+              "N": "G1",
+              "T": 1,
+              "DN": "D1"
+             },
+             {
+              "N": "G2",
+              "T": 7
+             },
+             {
+              "N": "M0",
+              "T": 4
+             }
+            ],
+            "C": [
+             0,
+             0,
+             1787788800000,
+             1
+            ]
+           },
+           {
+            "C": [
+             1795046400000
+            ],
+            "R": 11
+           },
+           {
+            "C": [
+             1802304000000
+            ],
+            "R": 11
+           },
+           {
+            "C": [
+             1809561600000
+            ],
+            "R": 11
+           },
+           {
+            "C": [
+             1816819200000
+            ],
+            "R": 11
+           }
+          ]
+         }
+        ],
+        "IC": true,
+        "HAD": true,
+        "ValueDicts": {
+         "D0": [
+          "10-S-000000 (Stiklas)"
+         ],
+         "D1": [
+          "kas 84 dienas"
+         ]
+        }
+       }
+      ]
+     }
+    }
+   }
+  }
+ ]
+}

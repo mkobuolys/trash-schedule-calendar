@@ -1,0 +1,30 @@
+# Local design/spec notes — not part of the published repo
+docs/
+
+# Real configuration holds a home address; the published repo ships
+# config.example.yaml with placeholders instead. Forkers who don't mind
+# committing their own address can remove this line.
+config.yaml
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# Playwright failure artifacts
+screenshots/
+traces/
+test-results/
+
+# Secrets
+.env
+client_secret*.json
+token.json
+
+# macOS
+.DS_Store

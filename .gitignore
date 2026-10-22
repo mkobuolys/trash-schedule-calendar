@@ -11,15 +11,5 @@ __pycache__/
 # Local site build
 _site/
 
-# Left over from the retired Google Calendar sync; these hold a home address
-# and OAuth tokens, so they must never be committed.
-docs/
-config.yaml
-.env
-client_secret*.json
-token.json
-screenshots/
-traces/
-
 # macOS
 .DS_Store

@@ -31,6 +31,11 @@ FALLBACK_MODEL_ID = 1026609
 FALLBACK_DATASET_ID = "90015897-045e-4f68-8f83-c40d1fc3bfc2"
 
 TIMEOUT = 60
+# ekonovus.lt answers 403 to the python-requests User-Agent.
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+)
 
 
 class EkonovusContainer(BaseModel):
@@ -159,7 +164,10 @@ class HttpTransport:
     """Resolves the Power BI endpoint, then posts querydata requests."""
 
     def __init__(self, session: requests.Session | None = None) -> None:
-        self.session = session or requests.Session()
+        if session is None:
+            session = requests.Session()
+            session.headers["User-Agent"] = USER_AGENT
+        self.session = session
         self._endpoint: Endpoint | None = None
 
     def endpoint(self) -> Endpoint:

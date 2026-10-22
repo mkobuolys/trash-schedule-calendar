@@ -1,193 +1,91 @@
 # trash-schedule-calendar
 
-Waste collection dates in Lithuania are only discoverable by filling in forms on
-provider websites, one container at a time, with no notification. This scrapes
-them for the containers you configure and syncs the next six months into a
-dedicated Google Calendar, as all-day events that remind you **the evening
-before** so the containers get pushed out in time.
+In Lithuania, waste collection dates can only be found by filling in forms on
+the provider's website, one container at a time, with no notifications. This
+project puts them in your calendar instead. It's built for people who have
+never heard of GitHub: you open a web page, type the number printed on your
+bin, and add the schedule to Google, Apple or Outlook Calendar with one click.
+There's no account to create and nothing to install. Calendar apps re-fetch
+subscribed links on their own, and that is what keeps the schedule in sync.
 
-Runs weekly as a GitHub Action. Nothing to install locally unless you want to.
+Everything runs on GitHub, free:
 
-## Providers
+```
+GitHub Action (daily)                       GitHub Pages (static)
+ ├─ export every Ekonovus schedule  ───►    ├─ index.html, app.js, logic.js
+ ├─ one .ics per (waste type, schedule set) ├─ feeds/<id>.ics        (~3,100)
+ ├─ one .ics per Svara recurrence           ├─ feeds/svara-*.ics     (70)
+ └─ container → feed lookup                 ├─ lookup/<xx>.json      (256 shards)
+                                            └─ manifest.json
+```
 
-| Provider | Waste types | What it needs | How it is read |
-|---|---|---|---|
-| `ekonovus` | glass, packaging | container id only | HTTP query against the Power BI report behind [ekonovus.lt](https://www.ekonovus.lt/aptarnavimo-grafikai/) |
-| `svara` | mixed municipal | container id **+ address** | Playwright fills the [grafikai.svara.lt](https://grafikai.svara.lt/) address form, then downloads that container's ICS |
+## How it works
 
-**Ekonovus** is queried directly by inventory number, so no address is needed.
+**Ekonovus.** The Power BI report behind ekonovus.lt is queried in bulk: every
+future collection date of every schedule (~4,800), and every container's
+schedules (~515,000 containers). Containers with the same waste type and the
+same set of schedules share one feed, so the ~512,000 active containers collapse
+into ~3,100 feeds. The page finds a container's feed in `lookup/<xx>.json`,
+where `xx` is the first byte of the SHA-256 of the normalized container number.
+That lookup runs in the browser; the number is never sent anywhere.
 
-**Svara** needs the address because its address form is the only lookup entry
-point — the container id is then matched against the results. Its ICS ships a
-single recurring event (e.g. every second Wednesday), which is expanded into
-individual dates.
+**Svara.** Since October 2026, grafikai.svara.lt has put its form and every
+download endpoint behind a Cloudflare Turnstile "confirm you are human" check,
+which no unattended client can pass. Its schedules are a single
+fixed recurrence anyway, so the person enters their next collection date and
+how often it repeats. Every weekly recurrence that can be described that way
+(7 weekdays × every 1–4 weeks × which week of the cycle) is only 70 feeds, all
+pre-generated. The page computes which one from the date.
 
-> **Svara is currently blocked.** Since October 2026 grafikai.svara.lt puts its
-> form and every download endpoint behind a Cloudflare Turnstile "confirm you
-> are human" check, which headless Chromium cannot pass. The `svara` provider
-> fails until the site offers an unattended route again. Its search responses
-> already carry a signed `subscriptionUrl`, which is not served yet.
+**Reminders.** Each event carries an alarm at 18:00 the evening before. Apple
+Calendar honours it. Google Calendar and Outlook ignore alarms in subscribed
+calendars, so the page tells Google users to set the calendar's all-day
+notification once.
 
-## Setup
+**Feed links never break.** A feed's id is a hash of its waste type and schedule
+set. If Ekonovus moves containers to another schedule, their old feed would
+disappear and subscribed calendars would quietly stop updating. To prevent
+that, each build reads the live `manifest.json` and republishes every feed id
+that no longer exists as a notice feed ("Šiukšlių grafikas pasikeitė…") telling
+subscribers to add their calendar again.
 
-### 1. Create a dedicated calendar
+**Failing safely.** The build fails, and the deploy is skipped, when the export
+returns far fewer schedules or containers than expected, or when the live
+manifest cannot be read. The site already published stays up with the previous
+day's data, and GitHub emails the repository owner.
 
-In Google Calendar, create a new calendar (e.g. `Šiukšlės`). Open its settings
-and copy the **Calendar ID**. Use a dedicated calendar: the sync deletes managed
-events that are no longer scheduled, and a separate calendar keeps that blast
-radius small.
+## Privacy
 
-### 2. Create an OAuth client
+A feed link contains neither a container number nor an address, only the id of
+a schedule shared by many households. The site publishes the container →
+schedule mapping, which Ekonovus already publishes; it publishes no addresses.
 
-In [Google Cloud Console](https://console.cloud.google.com/): create a project,
-enable the **Google Calendar API**, then create an **OAuth client ID** of type
-*Desktop app* and download the client secret JSON.
+## One-time setup
 
-A user OAuth token is used rather than a service account on purpose. The
-Calendar API applies reminder overrides to the *requesting user's* copy of an
-event, so a service account would set reminders on its own copy and the
-notification would never reach your phone.
+1. Settings → Pages → **Source: GitHub Actions**.
+2. Merge to `main` (or run the workflow by hand). The page is served at
+   `https://<owner>.github.io/<repo>/`.
 
-### 3. Mint a refresh token
+The workflow runs daily at 03:00 UTC. Its `keepalive` job re-enables the
+workflow through the API, because GitHub disables scheduled workflows after 60
+days without repository activity.
+
+## Development
 
 ```bash
-pip install -e ".[dev]"
-python scripts/authorize.py ~/Downloads/client_secret.json
+python -m venv .venv && .venv/bin/pip install -e ".[dev]"
+
+.venv/bin/pytest                         # offline
+.venv/bin/pytest -m live                 # also exports from the real report
+node --test tests/js/logic.test.mjs      # page logic
+
+.venv/bin/python -m trash_feeds.cli --out /tmp/site --site-url http://localhost:8000 --fresh
+python -m http.server 8000 --directory /tmp/site
 ```
 
-This opens a browser once and prints the three values to store as secrets.
+`--fresh` skips reading the live manifest. A full export takes about a minute
+and writes ~90 MB.
 
-### 4. Set repository secrets
-
-Settings → Secrets and variables → Actions:
-
-| Secret | Value |
-|---|---|
-| `GOOGLE_OAUTH_CLIENT_ID` | from step 3 |
-| `GOOGLE_OAUTH_CLIENT_SECRET` | from step 3 |
-| `GOOGLE_OAUTH_REFRESH_TOKEN` | from step 3 |
-| `TRASH_CONFIG_YAML` | your whole `config.yaml`, contents pasted in |
-
-### 5. Configure your containers
-
-Copy `config.example.yaml` and fill in your own values:
-
-```yaml
-calendar_id: "your-calendar-id@group.calendar.google.com"
-timezone: Europe/Vilnius
-horizon_months: 6
-reminder_minutes_before: 360 # 18:00 the previous evening
-
-containers:
-  - provider: ekonovus
-    id: "00-S-00000"
-
-  - provider: svara
-    id: "00-MK-000000"
-    location:
-      region: "Example r. sav."
-      subdistrict: "Example sen."
-      city: "Example mstl."
-      street: "Example g."
-      house: "1-1"
-```
-
-`config.yaml` is **gitignored**, because it contains your home address — paste it
-into the `TRASH_CONFIG_YAML` secret instead. `config.example.yaml` holds only
-placeholders. If you don't mind publishing your address, remove `config.yaml`
-from `.gitignore` and commit it; the workflow falls back to a committed file when
-the secret is unset.
-
-`label` is optional. Failing an explicit label, the provider's own waste type is
-used, then the inventory-code convention (`-S-` → stiklas, `-P-` → pakuotės,
-`-MK-` → mišrios komunalinės), then the raw id.
-
-### Finding your container ids
-
-They are printed on the container itself, and shown in each provider's own web
-UI when you look up your address. Ekonovus ids look like `52-S-00000` (glass) and
-`52-P-00000` (packaging); Svara ids look like `52-MK-000000`.
-
-## Local usage
-
-```bash
-pip install -e ".[dev]"
-python -m playwright install chromium
-
-python -m trash_calendar.cli --dry-run --verbose   # show the diff, change nothing
-python -m trash_calendar.cli --verbose             # apply it
-```
-
-`--dry-run` works **without** Google credentials — it scrapes and prints the
-events it would create, so you can check the schedule before doing any Google
-setup.
-
-Flags: `--config PATH`, `--source PROVIDER` (only that provider), `--months N`
-(override the horizon), `--force` (allow deleting more than half the managed
-events), `--dry-run`, `--verbose`.
-
-Tests:
-
-```bash
-pytest              # offline, fixture-driven
-pytest -m live      # also hits both providers for real
-```
-
-## How the sync behaves
-
-- One all-day event per collection date. Containers collected the same day are
-  merged into one event: `🗑️ Išstumti: stiklas + pakuotės`.
-- Every event created carries a `managedBy` marker. Each run lists **only**
-  marked events, then creates, patches or deletes to match the scrape. Events
-  you add to the calendar by hand are never touched.
-- Re-running changes nothing if the schedule hasn't changed.
-
-## When something breaks
-
-The job exits non-zero — and GitHub emails you — if a provider returns no dates,
-returns an implausible number, changes response shape, or if a run would delete
-more than half the managed events.
-
-This matters more than it sounds: the failure mode worth guarding against is a
-silent one, where a site changes, nothing is scraped, and the reminders simply
-stop.
-
-To debug a provider failure, reproduce it locally — `pytest -m live` writes
-`screenshots/` and `traces/` on the spot. CI deliberately uploads neither; see
-below.
-
-## A note on privacy
-
-On a public repository, **Actions logs and artifacts are world-readable**, so the
-scraper treats them as published output:
-
-- **Container ids are redacted in all log output** (`52-S-***27`). They are not
-  opaque tokens — Ekonovus' public API resolves a container id to the street
-  address it serves, with no authentication, so a full id in a log discloses the
-  address.
-- **CI never runs `--verbose`**, because debug logging prints the Calendar API
-  URL, which contains the calendar id.
-- **No failure artifacts are uploaded**, because Playwright's screenshot of the
-  provider's results page shows the address in full.
-- `config.yaml` (address) and `.env` (tokens) are gitignored, and
-  `tests/test_repo_privacy.py` fails the build if any tracked file contains a
-  value from your local config.
-
-The full container id still appears in the calendar event description — that is
-your own private calendar, and it is what you need when contacting the operator.
-
-## Adding a provider
-
-Add a module under `trash_calendar/providers/` exposing:
-
-```python
-class MyProvider:
-    name: ClassVar[str] = "myprovider"
-    ConfigModel: ClassVar[type[BaseModel]] = MyContainer  # required config fields
-
-    def fetch(self, container: ContainerConfig, horizon: DateRange) -> list[Collection]: ...
-```
-
-Then add one entry to the registry in `trash_calendar/providers/__init__.py`.
-`ConfigModel` is what makes a bad config fail at startup naming the missing
-field, rather than mid-scrape. Nothing in merging or calendar sync changes.
+`normalizeId`, `shardOf` and `svaraFeedId` in `site/logic.js` must agree with
+their Python counterparts in `trash_feeds/feeds.py`. Both test suites assert the
+same vectors.

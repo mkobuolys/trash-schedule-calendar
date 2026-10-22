@@ -1,11 +1,3 @@
-# Local design/spec notes — not part of the published repo
-docs/
-
-# Real configuration holds a home address; the published repo ships
-# config.example.yaml with placeholders instead. Forkers who don't mind
-# committing their own address can remove this line.
-config.yaml
-
 # Python
 .venv/
 venv/
@@ -16,15 +8,18 @@ __pycache__/
 .mypy_cache/
 *.egg-info/
 
-# Playwright failure artifacts
-screenshots/
-traces/
-test-results/
+# Local site build
+_site/
 
-# Secrets
+# Left over from the retired Google Calendar sync; these hold a home address
+# and OAuth tokens, so they must never be committed.
+docs/
+config.yaml
 .env
 client_secret*.json
 token.json
+screenshots/
+traces/
 
 # macOS
 .DS_Store

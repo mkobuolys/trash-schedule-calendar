@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="lt">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Šiukšlių grafikas kalendoriuje</title>
+    <meta
+      name="description"
+      content="Įveskite konteinerio numerį ir pridėkite šiukšlių išvežimo dienas į savo kalendorių. Atsinaujina pats."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗑️</text></svg>"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Šiukšlių išvežimas jūsų kalendoriuje</h1>
+        <p class="lead">
+          Įveskite konteinerio numerį ir pridėkite išvežimo dienas į telefono ar kompiuterio
+          kalendorių. Kalendorius atsinaujins pats, o vakare prieš išvežimą gausite priminimą.
+        </p>
+      </header>
+
+      <noscript><p class="error">Šiam puslapiui reikia įjungto JavaScript.</p></noscript>
+
+      <section class="card">
+        <h2 class="step">1. Kas išveža jūsų šiukšles?</h2>
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" id="tab-ekonovus" aria-controls="panel-ekonovus" aria-selected="true">
+            Ekonovus
+            <small>stiklas, pakuotės, mišrios</small>
+          </button>
+          <button type="button" role="tab" id="tab-svara" aria-controls="panel-svara" aria-selected="false" tabindex="-1">
+            Svara
+            <small>mišrios komunalinės</small>
+          </button>
+        </div>
+
+        <form id="panel-ekonovus" role="tabpanel" aria-labelledby="tab-ekonovus">
+          <label for="container">Konteinerio numeris</label>
+          <p class="hint">Jį rasite ant lipduko ant konteinerio, pavyzdžiui <code>52-S-00000</code>.</p>
+          <div class="row">
+            <input
+              id="container"
+              name="container"
+              autocomplete="off"
+              autocapitalize="characters"
+              spellcheck="false"
+              placeholder="52-S-00000"
+              required
+            />
+            <button type="submit">Ieškoti</button>
+          </div>
+        </form>
+
+        <form id="panel-svara" role="tabpanel" aria-labelledby="tab-svara" hidden>
+          <p class="hint">
+            Svara neleidžia savo grafikų nuskaityti automatiškai, todėl nurodykite grafiką patys.
+            Tai reikia padaryti tik vieną kartą.
+          </p>
+          <label for="svara-date">Kada artimiausias išvežimas?</label>
+          <input type="date" id="svara-date" name="date" required />
+          <label for="svara-interval">Kaip dažnai išvežama?</label>
+          <select id="svara-interval" name="interval">
+            <option value="1">Kas savaitę</option>
+            <option value="2" selected>Kas 2 savaites</option>
+            <option value="3">Kas 3 savaites</option>
+            <option value="4">Kas 4 savaites</option>
+          </select>
+          <button type="submit">Rodyti grafiką</button>
+        </form>
+
+        <p id="status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section id="result" class="card" hidden>
+        <h2 class="step">2. Patikrinkite grafiką</h2>
+        <p class="feed-name" id="result-name"></p>
+        <p class="hint" id="result-details"></p>
+        <ul id="result-dates" class="dates"></ul>
+
+        <h2 class="step">3. Pridėkite į kalendorių</h2>
+        <div class="buttons">
+          <a id="add-google" class="button" target="_blank" rel="noopener">Google kalendorius</a>
+          <a id="add-apple" class="button">iPhone / Mac</a>
+          <a id="add-outlook" class="button" target="_blank" rel="noopener">Outlook</a>
+          <button id="copy-link" class="button secondary" type="button">Kopijuoti nuorodą</button>
+        </div>
+
+        <details>
+          <summary>Google: kaip gauti priminimą vakare prieš išvežimą</summary>
+          <p>
+            Google kalendorius priminimų iš prenumeruojamų kalendorių neperima, todėl priminimą
+            reikia nustatyti vieną kartą:
+          </p>
+          <ol>
+            <li>Kompiuteryje atidarykite <a href="https://calendar.google.com" target="_blank" rel="noopener">calendar.google.com</a>.</li>
+            <li>Kairėje, skiltyje „Kiti kalendoriai“, prie naujo kalendoriaus spauskite ⋮ ir pasirinkite „Nustatymai“.</li>
+            <li>Skiltyje apie visos dienos įvykių pranešimus pridėkite pranešimą: <strong>1 diena prieš, 18:00</strong>.</li>
+          </ol>
+          <p>
+            Telefone mygtukas neveikia? Google kalendorius naujus kalendorius prideda tik
+            naršyklėje, todėl atidarykite šį puslapį kompiuteryje. Po to kalendorius atsiras ir
+            telefone. Jei nematote, „Android“ kalendoriaus nustatymuose įjunkite jo sinchronizavimą.
+          </p>
+        </details>
+        <details>
+          <summary>iPhone / Mac</summary>
+          <p>
+            Paspaudus mygtuką, įrenginys paklaus, ar prenumeruoti kalendorių. Kad gautumėte
+            priminimą, prenumeruodami <strong>neįjunkite</strong> įspėjimų pašalinimo
+            (angl. „Remove Alerts“).
+          </p>
+        </details>
+        <details>
+          <summary>Outlook ir kitos programos</summary>
+          <p>
+            Mygtukas „Outlook“ veikia su outlook.com paskyromis. Darbo paskyroje arba kitoje
+            programoje spauskite „Kopijuoti nuorodą“ ir kalendoriuje pasirinkite „Pridėti kalendorių
+            iš interneto“ (arba „prenumeruoti“). Outlook priminimų iš prenumeruojamų kalendorių
+            neperima.
+          </p>
+        </details>
+
+        <p class="hint">
+          Turite daugiau konteinerių, pavyzdžiui, stiklui ir pakuotėms? Įveskite kito konteinerio
+          numerį ir pridėkite ir jį. Kiekvienas konteineris yra atskiras kalendorius.
+        </p>
+      </section>
+
+      <section class="faq">
+        <h2>Dažni klausimai</h2>
+        <details>
+          <summary>Ar reikia registruotis ar ką nors įdiegti?</summary>
+          <p>Ne. Užtenka vieną kartą pridėti kalendorių.</p>
+        </details>
+        <details>
+          <summary>Kaip dažnai grafikas atsinaujina?</summary>
+          <p>
+            Ekonovus grafikus tikriname kasdien. Jūsų kalendorius pakeitimus pasiima pats: Google
+            maždaug kartą per parą, Apple ir Outlook dažniau.
+          </p>
+        </details>
+        <details>
+          <summary>Ar mano duomenys kur nors siunčiami ar saugomi?</summary>
+          <p>
+            Ne. Konteinerio numeris ieškomas jūsų naršyklėje ir niekur nesaugomas. Kalendoriaus
+            nuorodoje nėra nei konteinerio numerio, nei adreso, tik grafiko kodas, bendras daugeliui
+            namų.
+          </p>
+        </details>
+        <details>
+          <summary>Ką daryti, jei Svara pakeis grafiką?</summary>
+          <p>
+            Ištrinkite seną kalendorių, čia įveskite naują artimiausio išvežimo datą ir pridėkite
+            kalendorių iš naujo.
+          </p>
+        </details>
+        <details>
+          <summary>Kaip kalendorių pašalinti?</summary>
+          <p>
+            Kalendoriaus programoje ištrinkite arba atsisakykite kalendoriaus „Šiukšlės: …“
+            prenumeratos.
+          </p>
+        </details>
+      </section>
+
+      <footer>
+        Neoficialus įrankis, nesusijęs su Ekonovus ar Svara. Duomenys imami iš viešų
+        <a href="https://www.ekonovus.lt/aptarnavimo-grafikai/" target="_blank" rel="noopener">ekonovus.lt grafikų</a>.
+        Patikrinkite svarbias datas pas savo atliekų tvarkytoją.
+        <a href="https://github.com/mkobuolys/trash-schedule-calendar" target="_blank" rel="noopener">Šaltinio kodas</a>
+      </footer>
+    </main>
+  </body>
+</html>

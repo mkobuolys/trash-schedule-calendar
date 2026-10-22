@@ -37,8 +37,6 @@ def secrets_from(config: Config) -> set[str]:
     values: set[str] = set()
     for container in config.containers:
         values.add(container.id)
-        if container.hashed_id:
-            values.add(container.hashed_id)
         if container.location is None:
             continue
         for field, value in container.location:

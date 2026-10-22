@@ -8,10 +8,6 @@ The container id cannot be queried directly. The flow is:
 2. That hashed id is passed to ``/api/calendar/download/{id}``, a plain REST
    endpoint returning an ICS. (The site's own "Gmail/Outlook" button instead
    opens a captcha-protected *email* dialog, which is why it is not used.)
-
-Since October 2026 the form sits behind a Cloudflare Turnstile human check, which
-headless Chromium cannot pass. A ``hashed_id`` copied once from a real browser
-session skips step 1 entirely.
 """
 
 from __future__ import annotations
@@ -48,7 +44,6 @@ class SvaraContainer(BaseModel):
 
     id: str
     location: Location
-    hashed_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -169,9 +164,7 @@ class PlaywrightLookup:
             except Exception as exc:
                 page.screenshot(path=str(ARTIFACTS / "svara-failure.png"), full_page=True)
                 raise ProviderError(
-                    f"Svara form lookup failed for {redact(container_id)!r}: {exc}. "
-                    "The form requires a human check; set hashed_id for this "
-                    "container in config.yaml (see README)"
+                    f"Svara form lookup failed for {redact(container_id)!r}: {exc}"
                 ) from exc
             finally:
                 context.tracing.stop(path=str(TRACES / "svara.zip"))
@@ -203,10 +196,7 @@ class HttpIcsFetcher:
             response = self.session.get(url, timeout=TIMEOUT)
             response.raise_for_status()
         except requests.RequestException as exc:
-            raise ProviderError(
-                f"Svara ICS download failed for hashed_id {redact(hashed_id)!r}: "
-                f"{str(exc).replace(hashed_id, redact(hashed_id))}"
-            ) from exc
+            raise ProviderError(f"Svara ICS download failed for {hashed_id!r}: {exc}") from exc
         return response.content
 
 
@@ -224,10 +214,7 @@ class SvaraProvider:
                 f"svara container {redact(container.id)!r} has no location configured"
             )
 
-        if container.hashed_id:
-            contract = Contract(hashed_id=container.hashed_id)
-        else:
-            contract = self._run(self.lookup.find, container.location, container.id)
+        contract = self._run(self.lookup.find, container.location, container.id)
         data = self._run(self.fetcher.fetch, contract.hashed_id)
 
         return parse_ics(

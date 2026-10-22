@@ -167,8 +167,7 @@ pytest -m live      # also hits both providers for real
 
 The job exits non-zero — and GitHub emails you — if a provider returns no dates,
 returns an implausible number, changes response shape, or if a run would delete
-more than half the managed events. Playwright failures upload a screenshot and
-trace as workflow artifacts.
+more than half the managed events.
 
 This matters more than it sounds: the failure mode worth guarding against is a
 silent one, where a site changes, nothing is scraped, and the reminders simply

@@ -22,6 +22,10 @@ point — the container id is then matched against the results. Its ICS ships a
 single recurring event (e.g. every second Wednesday), which is expanded into
 individual dates.
 
+Since October 2026 the Svara form sits behind a Cloudflare "confirm you are
+human" check that headless Chromium cannot pass, so CI needs the container's
+`hashed_id` in the config instead — see [Svara's human check](#svaras-human-check).
+
 ## Setup
 
 ### 1. Create a dedicated calendar
@@ -101,6 +105,29 @@ used, then the inventory-code convention (`-S-` → stiklas, `-P-` → pakuotės
 They are printed on the container itself, and shown in each provider's own web
 UI when you look up your address. Ekonovus ids look like `52-S-00000` (glass) and
 `52-P-00000` (packaging); Svara ids look like `52-MK-000000`.
+
+### Svara's human check
+
+The address form only yields an internal `hashedId` per container, which names
+that container's ICS download. With `hashed_id` set, the form is skipped:
+
+1. Open [grafikai.svara.lt](https://grafikai.svara.lt/) in a normal browser with
+   DevTools open on the **Network** tab.
+2. Pass the human check, fill in your address and press **Ieškoti**.
+3. Search the network responses (Cmd/Ctrl+Alt+F in Chrome) for your container id.
+   The `_serverFn` response that contains it also contains `hashedId` — copy the
+   value next to it.
+4. Add it to the container in `config.yaml` and to the `TRASH_CONFIG_YAML` secret:
+
+   ```yaml
+     - provider: svara
+       id: "00-MK-000000"
+       hashed_id: "copied-value"
+       location: ...
+   ```
+
+Treat it like the address: it is a key to your household's schedule, so it
+belongs in the secret, not in the repository.
 
 ## Local usage
 

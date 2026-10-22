@@ -31,6 +31,7 @@ class ContainerConfig(BaseModel):
     id: str
     label: str | None = None
     location: Location | None = None
+    hashed_id: str | None = None
 
 
 class Config(BaseModel):

@@ -14,9 +14,11 @@ containers:
     id: "00-S-00000"
 
   # Svara additionally needs the address, because its only lookup
-  # entry point is the address form.
+  # entry point is the address form. That form now requires a human
+  # check, so CI also needs hashed_id (see README, "Svara's human check").
   - provider: svara
     id: "00-MK-000000"
+    # hashed_id: "copied-from-the-browser"
     location:
       region: "Example r. sav."
       subdistrict: "Example sen."

@@ -2,11 +2,13 @@ from datetime import date
 from pathlib import Path
 
 import pytest
+import requests
 
 from trash_calendar.config import ContainerConfig, Location
 from trash_calendar.models import DateRange, ProviderError
 from trash_calendar.providers.svara import (
     Contract,
+    HttpIcsFetcher,
     SvaraProvider,
     decode_seroval,
     find_contract,
@@ -132,6 +134,28 @@ def test_fetch_wraps_lookup_failures_as_provider_error():
     )
     with pytest.raises(ProviderError, match="selector missing"):
         provider.fetch(CONTAINER, HORIZON)
+
+
+def test_configured_hashed_id_skips_the_address_form():
+    lookup, fetcher = FakeLookup(error=AssertionError("form must not be used")), FakeFetcher()
+    container = CONTAINER.model_copy(update={"hashed_id": "BBBB2222"})
+
+    collections = SvaraProvider(lookup=lookup, fetcher=fetcher).fetch(container, HORIZON)
+
+    assert lookup.calls == []
+    assert fetcher.calls == ["BBBB2222"]
+    assert collections
+
+
+class FailingSession:
+    def get(self, url, timeout):
+        raise requests.ConnectionError(f"cannot reach {url}")
+
+
+def test_ics_download_failure_does_not_reveal_the_hashed_id():
+    with pytest.raises(ProviderError) as err:
+        HttpIcsFetcher(session=FailingSession()).fetch("SECRET12345678")
+    assert "SECRET123456" not in str(err.value)
 
 
 @pytest.mark.live

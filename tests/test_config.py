@@ -66,6 +66,11 @@ def test_svara_container_with_incomplete_location_names_the_missing_field(tmp_pa
     assert "street" in str(err.value)
 
 
+def test_svara_container_accepts_a_hashed_id(tmp_path):
+    data = {**VALID, "containers": [{**VALID["containers"][1], "hashed_id": "AAAA1111"}]}
+    assert load_config(_write(tmp_path, data)).containers[0].hashed_id == "AAAA1111"
+
+
 def test_unknown_provider_is_rejected(tmp_path):
     data = {**VALID, "containers": [{"provider": "nope", "id": "1"}]}
     with pytest.raises(ConfigError) as err:

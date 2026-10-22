@@ -22,6 +22,12 @@ point — the container id is then matched against the results. Its ICS ships a
 single recurring event (e.g. every second Wednesday), which is expanded into
 individual dates.
 
+> **Svara is currently blocked.** Since October 2026 grafikai.svara.lt puts its
+> form and every download endpoint behind a Cloudflare Turnstile "confirm you
+> are human" check, which headless Chromium cannot pass. The `svara` provider
+> fails until the site offers an unattended route again. Its search responses
+> already carry a signed `subscriptionUrl`, which is not served yet.
+
 ## Setup
 
 ### 1. Create a dedicated calendar
@@ -140,8 +146,7 @@ pytest -m live      # also hits both providers for real
 
 The job exits non-zero — and GitHub emails you — if a provider returns no dates,
 returns an implausible number, changes response shape, or if a run would delete
-more than half the managed events. Playwright failures upload a screenshot and
-trace as workflow artifacts.
+more than half the managed events.
 
 This matters more than it sounds: the failure mode worth guarding against is a
 silent one, where a site changes, nothing is scraped, and the reminders simply

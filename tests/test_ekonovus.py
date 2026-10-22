@@ -7,7 +7,9 @@ import pytest
 from trash_calendar.config import ContainerConfig
 from trash_calendar.models import DateRange, ProviderError
 from trash_calendar.providers.ekonovus import (
+    SCHEDULES_PAGE,
     EkonovusProvider,
+    HttpTransport,
     apim_host,
     build_query,
     parse_embed_resource_key,
@@ -148,6 +150,18 @@ def test_fetch_raises_when_the_container_is_unknown_to_this_provider():
     # The error must carry the redacted id, never the full one.
     with pytest.raises(ProviderError, match=r"10-MK-\*\*\*00"):
         provider.fetch(container, DateRange(date(2026, 7, 28), date(2027, 1, 28)))
+
+
+def test_http_transport_does_not_identify_as_python_requests():
+    # ekonovus.lt answers 403 to the python-requests User-Agent.
+    assert "python-requests" not in HttpTransport().session.headers["User-Agent"]
+
+
+@pytest.mark.live
+def test_live_schedules_page_serves_the_embed_to_the_transport_session():
+    page = HttpTransport().session.get(SCHEDULES_PAGE, timeout=60)
+    assert page.status_code == 200
+    assert "app.powerbi.com/view" in page.text
 
 
 @pytest.mark.live

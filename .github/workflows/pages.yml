@@ -1,0 +1,77 @@
+name: Publish calendar feeds
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # daily 03:00 UTC
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Test
+        run: |
+          pytest
+          node --test tests/js/logic.test.mjs
+
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      # Fails, and so skips the deploy, when the export looks partial or the
+      # live manifest cannot be read. The site already published stays up.
+      - name: Generate site
+        run: python -m trash_feeds.cli --out _site --site-url "${{ steps.pages.outputs.base_url }}"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  # GitHub disables scheduled workflows after 60 days without repository
+  # activity, which would silently freeze every subscriber's calendar.
+  keepalive:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/pages.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}
